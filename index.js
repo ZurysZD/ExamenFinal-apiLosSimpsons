@@ -1,9 +1,21 @@
-const express = require("express"); //importar express
-const bodyParser = require("body-parser");
-const app = express(); //crear al servidor
-const port = process.env.PORT || 3000;
-app.use(bodyParser.urlencoded({ extended:false}));
-app.use(bodyParser.json());
-app.listen(port, () => {
- console.log(`hola servidor ejecucion en http://localhost:${port}`);
-})
+const express = require('express');
+const app = express();
+const cors = require('cors'); //Middleware para manejar CORS
+const axios = require('axios'); //solicitudes HTTP
+
+app.use(cors()); 
+
+app.get('/api/personajes/:nombre', async (req, res) => {
+  const nombre = req.params.nombre;
+  try {
+    const response = await axios.get(`https://apisimpsons.fly.dev/api/personajes/find/${nombre}`);
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener los datos del personaje' });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Servidor iniciado en http://localhost:3000');
+});
